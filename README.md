@@ -1,0 +1,1 @@
+# mirror-etcd-amd64
