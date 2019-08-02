@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -ex
+
+Usage() {
+  echo "$0 [rebuild]"
+}
+
+# Monitor Repository
+target_repository="etcd-amd64"
+
+# My docker hub Repository
+mirror_repository="hawsers/${target_repository}"
+
+target_tags=(`curl -k -s -X GET https://gcr.io/v2/google_containers/${target_repository}/tags/list | jq -r '.tags[] | @sh'`)
+
+mirror_tags=(`curl -sL https://hub.docker.com/v2/repositories/${mirror_repository}/tags/ | jq -r '.results[].name | @sh'`)
+
+missing_tags=()
+for i in "${target_tags[@]}"; do
+    skip=
+    for j in "${mirror_tags[@]}"; do
+        [[ $i == $j ]] && { skip=1; break; }
+    done
+    [[ -n $skip ]] || missing_tags+=("$i")
+done
+
+declare -p missing_tags
+
+for i in "${missing_tags[@]}"; do
+    echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
+    git commit -a -m ${i//\'} --allow-empty
+    git tag -f ${i//\'}
+done
+
+git push origin --all
