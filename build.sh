@@ -40,6 +40,7 @@ for i in "${missing_tags[@]}"; do
 done
 
 ls 
+git status
 
 git remote -v
 
@@ -51,4 +52,4 @@ git remote -v
 # git push origin --all
 # Push tags only, no code is committed, no build trigger
 # git push -v --tags origin refs/heads/master:refs/heads/master 
-git push -v origin master
+git push -v --tags origin HEAD
