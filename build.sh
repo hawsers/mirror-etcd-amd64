@@ -49,4 +49,6 @@ git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-etc
 git remote -v
 
 # git push origin --all
-git push -v --tags origin refs/heads/master:refs/heads/master 
+# Push tags only, no code is committed, no build trigger
+# git push -v --tags origin refs/heads/master:refs/heads/master 
+git push -v origin master
