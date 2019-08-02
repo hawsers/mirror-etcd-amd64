@@ -41,4 +41,4 @@ done
 
 git remote rm origin
 git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-etcd-amd64.git
-git push origin
+git push origin --all
