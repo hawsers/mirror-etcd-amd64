@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Prerequisite
+# Make sure you set secret enviroment variables in Travis CI
+# DOCKER_USERNAME
+# DOCKER_PASSWORD
+# API_TOKEN
+
 set -ex
 
 Usage() {
@@ -33,4 +39,6 @@ for i in "${missing_tags[@]}"; do
     git tag -f ${i//\'}
 done
 
+git remote rm origin
+git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-etcd-amd64.git
 git push origin --all
