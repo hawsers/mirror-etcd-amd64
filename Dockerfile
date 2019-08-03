@@ -1,1 +1,1 @@
-FROM k8s.gcr.io/etcd-amd64:3.0.12-experimental.7
+FROM k8s.gcr.io/etcd-amd64:3.0.12-experimental.8
