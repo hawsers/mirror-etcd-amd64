@@ -33,13 +33,8 @@ done
 
 declare -p missing_tags
 
-for i in "${missing_tags[@]}"; do
-    echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
-    git commit -a -m ${i//\'} --allow-empty
-    git tag -f ${i//\'}
-done
+git checkout master
 
-ls 
 git status
 
 git remote -v
@@ -49,7 +44,13 @@ git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-etc
 
 git remote -v
 
+for i in "${missing_tags[@]}"; do
+    echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
+    git commit -a -m ${i//\'} --allow-empty
+    git tag -f ${i//\'}
+done
+
 # git push origin --all
 # Push tags only, no code is committed, no build trigger
 # git push -v --tags origin refs/heads/master:refs/heads/master 
-git push -v --tags origin HEAD
+git push -v origin master
