@@ -34,11 +34,11 @@ done
 declare -p missing_tags
 
 # Git setup
-
-git checkout master
+#git checkout master
 
 git status
 
+# reAttach for Travis-CI
 git remote rm origin
 git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-etcd-amd64.git
 git remote -v
@@ -46,9 +46,16 @@ git remote -v
 for i in "${missing_tags[@]}"; do
     echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
     git commit -a -m ${i//\'} --allow-empty
-    git tag -f -a ${i//\'} -m "Auto Tag:${i//\'}"
-    git push -v -f origin ${i//\'}
+
+    #Check if tag exists
+    if [[ $(git tag -l '3.0.13*') ]]; then
+        continue
+    else
+        git tag -f -a ${i//\'} -m "Auto Tag:${i//\'}"
+        # MUST Push one by one
+        git push -v -f origin ${i//\'}
+    fi
 done
 
-# git push -v -f --tags origin master
+# do not push commits
 # git push -v -f origin master
