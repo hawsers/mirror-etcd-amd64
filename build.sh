@@ -36,6 +36,8 @@ git remote rm origin
 git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-${target_repository}.git
 git remote -v
 
+git checkout master
+
 for i in "${missing_tags[@]}"; do
     #Check if tag exists
     if [[ $(git tag -l ${i}) ]]; then
