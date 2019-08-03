@@ -33,21 +33,19 @@ done
 
 declare -p missing_tags
 
+# Git setup
 git checkout master
 
 git status
 
-git remote -v
-
 git remote rm origin
 git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-etcd-amd64.git
-
 git remote -v
 
 for i in "${missing_tags[@]}"; do
     echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
     git commit -a -m ${i//\'} --allow-empty
-    git tag -f ${i//\'}
+    git tag -f -a ${i//\'} -m "Auto Tag:${i//\'}"
 done
 
 git push -v -f --tags origin master
