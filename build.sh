@@ -37,13 +37,13 @@ git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-${t
 git remote -v
 
 for i in "${missing_tags[@]}"; do
-    echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
-    git commit -a -m ${i//\'} --allow-empty
-
     #Check if tag exists
-    if [[ $(git tag -l '3.0.13*') ]]; then
+    if [[ $(git tag -l ${i}) ]]; then
         continue
     else
+        echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
+        git commit -a -m ${i//\'} --allow-empty
+
         git tag -f -a ${i//\'} -m "Auto Tag:${i//\'}"
         # MUST Push one by one
         git push -v -f origin ${i//\'}
