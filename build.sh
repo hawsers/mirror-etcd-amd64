@@ -2,18 +2,13 @@
 
 # Prerequisite
 # Make sure you set secret enviroment variables in Travis CI
-# DOCKER_USERNAME
-# DOCKER_PASSWORD
+# TARGET_REPOSITORY
 # API_TOKEN
 
 set -ex
 
-Usage() {
-  echo "$0 [rebuild]"
-}
-
 # Monitor Repository
-target_repository="etcd-amd64"
+target_repository="${TARGET_REPOSITORY}"
 
 # My docker hub Repository
 mirror_repository="hawsers/${target_repository}"
@@ -34,13 +29,11 @@ done
 declare -p missing_tags
 
 # Git setup
-#git checkout master
-
 git status
 
 # reAttach for Travis-CI
 git remote rm origin
-git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-etcd-amd64.git
+git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-${target_repository}.git
 git remote -v
 
 for i in "${missing_tags[@]}"; do
