@@ -50,4 +50,4 @@ for i in "${missing_tags[@]}"; do
     git tag -f ${i//\'}
 done
 
-git push -v  --tags origin master
+git push -v -f --tags origin master
