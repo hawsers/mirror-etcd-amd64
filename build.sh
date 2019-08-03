@@ -34,6 +34,7 @@ done
 declare -p missing_tags
 
 # Git setup
+
 git checkout master
 
 git status
@@ -46,6 +47,8 @@ for i in "${missing_tags[@]}"; do
     echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
     git commit -a -m ${i//\'} --allow-empty
     git tag -f -a ${i//\'} -m "Auto Tag:${i//\'}"
+    git push -v -f origin ${i//\'}
 done
 
-git push -v -f --tags origin master
+# git push -v -f --tags origin master
+# git push -v -f origin master
