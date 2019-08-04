@@ -2,18 +2,13 @@
 
 # Prerequisite
 # Make sure you set secret enviroment variables in Travis CI
-# DOCKER_USERNAME
-# DOCKER_PASSWORD
+# TARGET_REPOSITORY
 # API_TOKEN
 
 set -ex
 
-Usage() {
-  echo "$0 [rebuild]"
-}
-
 # Monitor Repository
-target_repository="etcd-amd64"
+target_repository="${TARGET_REPOSITORY}"
 
 # My docker hub Repository
 mirror_repository="hawsers/${target_repository}"
@@ -33,12 +28,30 @@ done
 
 declare -p missing_tags
 
+# Git setup
+git status
+
+# reAttach for Travis-CI
+git remote rm origin
+git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-${target_repository}.git
+git remote -v
+
+git checkout master
+git fetch --tags
+
 for i in "${missing_tags[@]}"; do
-    echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
-    git commit -a -m ${i//\'} --allow-empty
-    git tag -f ${i//\'}
+    #Check if tag exists
+    if [[ $(git tag -l ${i//\'}) ]]; then
+        continue
+    else
+        echo "FROM k8s.gcr.io/${target_repository}:${i//\'}" > Dockerfile
+        git commit -a -m ${i//\'} --allow-empty
+
+        git tag -f -a ${i//\'} -m "Auto Tag:${i//\'}"
+        # MUST Push one by one
+        git push -v -f origin ${i//\'}
+    fi
 done
 
-git remote rm origin
-git remote add origin https://hawsers:${API_TOKEN}@github.com/hawsers/mirror-etcd-amd64.git
-git push origin --all
+# do not push commits
+# git push -v -f origin master
