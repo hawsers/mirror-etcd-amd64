@@ -17,11 +17,23 @@ target_tags=(`curl -k -s -X GET https://gcr.io/v2/google_containers/${target_rep
 
 # docker hub return paginated result
 mirrored_tags=()
-page=0
-while [ $? == 0 ]
-do 
-    page=$((page+1))
-    mirrored_tags+=(`curl -sL https://hub.docker.com/v2/repositories/${mirror_repository}/tags?page=${page} 2>/dev/null | jq -r '.results[].name | @sh'`)
+page=1
+
+while [ $page -gt 0 ]
+do     
+    dockerhub_response=`curl -sL https://hub.docker.com/v2/repositories/${mirror_repository}/tags?page=${page}`
+
+    next_page=`echo $dockerhub_response | jq  -r '.next'`
+
+    if [ ${next_page//\'} != 'null' ]; then
+        page=$((`echo $next_page | grep -o '[0-9]\+$'`))
+    else
+        page=0
+    fi
+
+    mirrored_tags+=(`echo $dockerhub_response | jq -r '.results[].name | @sh'`)
+    # mirrored_tags+=(`curl -sL https://hub.docker.com/v2/repositories/${mirror_repository}/tags?page=${page} 2>/dev/null | jq -r '.results[].name | @sh'`)
+
 done
 
 missing_tags=()
