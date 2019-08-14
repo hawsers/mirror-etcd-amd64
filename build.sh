@@ -16,7 +16,7 @@ mirror_repository="hawsers/${target_repository}"
 target_tags=(`curl -k -s -X GET https://gcr.io/v2/google_containers/${target_repository}/tags/list | jq -r '.tags[] | @sh'`)
 
 # docker hub return paginated result
-mirrored_tags=()#(`curl -sL https://hub.docker.com/v2/repositories/${mirror_repository}/tags/ | jq -r '.results[].name | @sh'`)
+mirrored_tags=()
 page=0
 while [ $? == 0 ]
 do 
